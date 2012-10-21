@@ -1,0 +1,106 @@
+<resources>
+
+    <string name="app_name">Pixel Compliments</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    
+    <string name="menu_about_title">About</string> 
+    <string name="menu_about_summary">More info at http://droidalyzer.com/ioiomatrix.html\n\nDesigned by Open Gadgets LLC</string>
+    <string name="versionString">Version</string> 
+    
+   <string name="oneTimeSetupString">One Time Setup: Copying stock images to your SD card.</string> 
+   <string name="bluetoothPairingString">Please ensure Bluetooth pairing has been completed prior. The Bluetooth pairing code is: 4545."</string> 
+    
+   
+   <string name="menu_instructions_title">Instructions</string>
+   <string name="setupInstructionsString">First pair your Android device to the Pixel LED frame which will show up as \'IOIO\' in Bluetooth using code 4545.\n\nAfter physically mounting the Pixel LED frame in your desired location, now calibrate the proximity sensor.\n\nFirst take a note of the proximity sensor value when no one is in front of the Pixel LED frame.\n\nThen stand in the location where you want the proximity sensor to trigger displaying the image.\n\nBased on that, then enter the lower and upper thresholds in the settings of this app.\n\nWhen the user is within this range, the image(s) will then display.\n\nYou can also control how long the image displays via the Image Display Duration setting.</string>
+   <string name="setupInstructionsStringTitle">Instructions</string>   
+     
+     
+    <string name="prefTitle">Pixel Compliments Settings</string>
+    <string name="menu_prefs_title">Settings</string>
+    <string name="prefSummary">Pixel Compliments Settings</string>
+    
+    <string name="scanAll">Show All Album Pics</string>
+    <string name="pref_scanAll_default">false</string>
+    <string name="scanAllSummary">Only images in the pixelhalloween directory from the root of your SD card will be displayed. Checking this box displays all SD card pictures.</string>
+  
+    <string name="OKText">OK</string>   
+    <string name="notFoundString">Pixel LED Frame Not Found</string>   
+   
+    <string name="selected_matrix">selected_matrix</string>
+    <string name="matrix">LED Matrix Selection</string>
+    <string name="matrixSummary">Select your RGB LED Matrix model</string>    
+    <string name="dialogTitleMatrix">LED Matrix Selection</string>
+    <string name="matrix_default_value">3</string>   
+    
+    <string name="bluetooth_pair">Blueooth Pairing</string>
+    <string name="bluetooth_pairSummary">Shortcut to the Bluetooth settings screen. Pair to IOIO using code: 4545</string>
+    
+    <string name="slideShowtitle">Slide Show Settings</string>
+    <string name="slideShowtitleSummary">Slide Show Settings</string>
+   
+    <string name="slideShowMode">Slide Show Mode</string>    
+    <string name="slideShowModeDefault">false</string>
+    <string name="slideShowModeSummary">Slide Show Mode</string>
+    
+    <string name="noSleep">Disable Power Savings</string>    
+    <string name="pref_noSleepDefault">false</string>
+    <string name="noSleepSummary">Forces the app to be always on, your device will not go into power savings mode while this app is running. Good if using as a Kiosk for example. </string>
+    
+   <string name="showProxValue">Show Prox Sensor Data</string>    
+    <string name="pref_showProxValue">true</string>
+    <string name="showProxValueSummary">Displays the proxmity sensor incoming data, use this to calibrate the proximity sensor and set your desired range</string>
+    
+    
+    <string name="menu_rescan_title">Rescan</string>
+    <string name="rescan_screen_verbage">Now scanning your SD card or internal memory for new images or deletions to the pixelalbum folder, just a moment&#8230;</string>
+    
+    <string name="homeVerbage">Proximity Sensor Value for Calibration\n\nBased on this value, modify the proximty lower and upper threshold values in settings accordingly.</string>
+    <string name="startup_verbage_2">Copying stock halloween images to your SD card or internal memory&#8230;</string>
+    <string name="firstTime_instructions">After this completes, select Instructions from the menu to use your own images</string>
+    
+    
+     <string name="home_screen_verbage">Go to settings and check Show Prox Sensor Data if you need to calibrate the proximity sensor</string>
+    
+    <string name="imageDisplayDuration">Image Display Duration</string>    
+    <string name="pref_imageDisplayDuration">pref_imageDisplayDuration</string>
+    <string name="imageDisplayDurationDefault">5</string>
+    <string name="imageDisplayDurationSummary">Number of seconds the proximity triggered image is dispay before clearing</string>
+    
+    <string name="pauseBetweenImagesDuration">Between Image Delay</string>    
+    <string name="pref_pauseBetweenImagesDuration">pref_pauseBetweenImagesDuration</string>
+    <string name="pauseBetweenImagesDurationDefault">3</string>
+    <string name="pauseBetweenImagesDurationSummary">Delay in seconds to show the next image if the user is still standing in proximity sensor range</string>
+    
+    <string name="proximityThresholdLower">Prox Threshold Lower</string>    
+    <string name="pref_proxThresholdLower">pref_proxThreshold</string>
+    <string name="proximityThresholdLowerDefault">200</string>
+    <string name="proximityThresholdLowerSummary">An image will display when the proximity sensor value falls between the lower and upper thresholds</string>
+    
+     <string name="proximityThresholdUpper">Prox Threshold Upper</string>    
+    <string name="pref_proxThresholdUpper">pref_proxThresholdUpper</string>
+    <string name="proximityThresholdUpperDefault">250</string>
+    <string name="proximityThresholdUpperSummary">An image will display when the proximity sensor value falls between the lower and upper thresholds</string>
+    
+    <string name="proximityPin">Proximity Pin</string>    
+    <string name="pref_proximityPin">pref_proximityPin</string>
+    <string name="proximityPinDefault">32</string>
+    <string name="proximityPinSummary">IOIO Pin number used for the proximity sensor input</string>
+    
+    
+    <string name="stopSlideShowMessage">You\'re still in slide show mode, swipe from right to left to end the slide show and then you can select a single image</string>
+    <string name="loadingImagesPlsWaitTitle">Please Wait</string>
+    <string name="loadingImagesPlsWait">Loading images, just a moment&#8230;</string>
+    
+    <string name="slideShowStopInstructions">Swipe from right to left to stop the Slide Show</string>
+    <string name="slideShowStartVerbage">Starting Slide Show&#8230;</string>
+    <string name="slideShowStopVerbage">Slide Show Stopped</string>    
+    <string name="slideShowStartInstructions">Tap to display a single image or Swipe from left to right to start a Slide Show</string>
+    
+    <string name="dimDuringSlideShow">Dim During Slide Show</string>    
+    <string name="dimDuringSlideShowDefault">true</string>
+    <string name="dimDuringSlideShowSummary">Saves battery life by dimming screen during the Slide Show</string>
+
+</resources>
