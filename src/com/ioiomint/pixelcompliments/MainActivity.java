@@ -40,12 +40,8 @@ import alt.android.os.CountDownTimer;
  */
 @SuppressLint({ "ParserError", "NewApi" })
 public class MainActivity extends IOIOActivity   {
-
-    //look into internet loads
-	//make an  directory, copy some files in there
    
 	private ioio.lib.api.RgbLedMatrix.Matrix KIND;  //have to do it this way because there is a matrix library conflict
-	
     private static final String TAG = "Pixel Compliments";	
   	private short[] frame_ = new short[512];
   	private short[] rgb_;
@@ -53,6 +49,7 @@ public class MainActivity extends IOIOActivity   {
   	private byte[] BitmapBytes;
   	private byte[] BitmayArray;
   	private InputStream BitmapInputStream;
+  	private InputStream BitmapInputStreamBlank;
   	private ByteBuffer bBuffer;
   	private ShortBuffer sBuffer;
   	private SensorManager mSensorManager;
@@ -61,7 +58,7 @@ public class MainActivity extends IOIOActivity   {
   	private int i = 0;
   	private int deviceFound = 0;
   	private Handler mHandler;
-  	
+  	private final String LOG_TAG = "PixelCompliments";
   	private SharedPreferences prefs;
 	private String OKText;
 	private Resources resources;
@@ -73,27 +70,19 @@ public class MainActivity extends IOIOActivity   {
 	private ConnectTimer connectTimer; 
 	private ProxImageTimer proxImageTimer;
 	private PauseBetweenImagesDurationTimer pausebetweenimagesdurationTimer;
+	private MatrixDelayTimer matrixdelaytimer;
 	//****************
 	
 	private boolean scanAllPics;
 	private String setupInstructionsString; 
 	private String setupInstructionsStringTitle;	
 	private boolean noSleep = false;
-	
-	
-    private Display display;
-    
-     
-    
+     private Display display;
      private int imageDisplayDuration;
      private int pauseBetweenImagesDuration;
-     
      private int proximityPin_;
      private int proximityThresholdLower_;
      private int proximityThresholdUpper_;
-     
-     
-    // private TextView firstTimeSetupCounter_;
      private TextView proxTextView_;
      private TextView firstTimeSetup1_;
      private ProgressDialog pDialog = null;
@@ -101,9 +90,9 @@ public class MainActivity extends IOIOActivity   {
      private int proxTriggeredFlag = 0;
      private ioio.lib.api.RgbLedMatrix matrix_;
      private int proxCounter = 1;
-  //   private boolean dimDuringSlideShow = false;
-     
-     //add long click to delete an image
+     private boolean debug_;
+     private int appFirstRunDone = 0;
+     private int startupDelay_ = 5;
      
 
     @Override
@@ -122,7 +111,7 @@ public class MainActivity extends IOIOActivity   {
         }
         catch (NameNotFoundException e)
         {
-            Log.v(tag, e.getMessage());
+            Log.v(LOG_TAG, e.getMessage());
         }
         
         //******** preferences code
@@ -143,14 +132,10 @@ public class MainActivity extends IOIOActivity   {
  		proxImageTimer = new ProxImageTimer(imageDisplayDuration*1000,imageDisplayDuration*1000);   		
  		pausebetweenimagesdurationTimer = new PauseBetweenImagesDurationTimer(pauseBetweenImagesDuration*1000,pauseBetweenImagesDuration*1000); 
  		
+ 		matrixdelaytimer = new MatrixDelayTimer(startupDelay_*1000,startupDelay_*1000);
+ 		
  		setupInstructionsString = getResources().getString(R.string.setupInstructionsString);
         setupInstructionsStringTitle = getResources().getString(R.string.setupInstructionsStringTitle);
-   
-    }
-    
-   
-    protected void onDestroy() {
-        super.onDestroy();
     }
     
     @Override
@@ -164,7 +149,6 @@ public class MainActivity extends IOIOActivity   {
     @Override
     public boolean onOptionsItemSelected (MenuItem item)
     {
-       
 		
       if (item.getItemId() == R.id.menu_instructions) {
  	    	AlertDialog.Builder alert=new AlertDialog.Builder(this);
@@ -189,8 +173,6 @@ public class MainActivity extends IOIOActivity   {
     	
        return true;
     }
-    
-    
 
 
 @Override
@@ -199,17 +181,18 @@ public class MainActivity extends IOIOActivity   {
     	super.onActivityResult(reqCode, resCode, data);    	
     	setPreferences(); //very important to have this here, after the menu comes back this is called, we'll want to apply the new prefs without having to re-start the app
     	
-    	//if (reqCode == 0 || reqCode == 1) //then we came back from the preferences menu so re-load all images from the sd card, 1 is a re-scan
+    	if (reqCode == 0 || reqCode == 1) {
+    		appFirstRunDone = 0;  //let's reset this flag so we've got the timer delay for the artifacts issue
+    	}
     	
     } 
     
     private void setPreferences() //here is where we read the shared preferences into variables
     {
-     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);     
-    
-   //  scanAllPics = prefs.getBoolean("pref_scanAll", false);
+     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);   
      noSleep = prefs.getBoolean("pref_noSleep", false);
      showProx_ = prefs.getBoolean("pref_showProxValue", true);
+     debug_ = prefs.getBoolean("pref_debugMode", false);
      
      imageDisplayDuration = Integer.valueOf(prefs.getString(   
   	        resources.getString(R.string.pref_imageDisplayDuration),
@@ -219,6 +202,9 @@ public class MainActivity extends IOIOActivity   {
   	        resources.getString(R.string.pref_pauseBetweenImagesDuration),
   	        resources.getString(R.string.pauseBetweenImagesDurationDefault)));  
      
+     startupDelay_ = Integer.valueOf(prefs.getString(   
+   	        resources.getString(R.string.pref_startupDelay),
+   	        resources.getString(R.string.startupDelayDefault)));  
      
     proximityPin_ = Integer.valueOf(prefs.getString(   
    	        resources.getString(R.string.pref_proximityPin),
@@ -249,32 +235,26 @@ public class MainActivity extends IOIOActivity   {
     	 BitmapInputStream = getResources().openRawResource(R.raw.selectpic);
     	 break;
      case 2:
-    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; //v1
+    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; //v1
     	 BitmapInputStream = getResources().openRawResource(R.raw.selectpic32);
     	 break;
      case 3:
-    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; //v2
+    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; //v2
     	 BitmapInputStream = getResources().openRawResource(R.raw.selectpic32);
     	 break;
      default:	    		 
-    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32_NEW; //v2 as the default
+    	 KIND = ioio.lib.api.RgbLedMatrix.Matrix.SEEEDSTUDIO_32x32; //v2 as the default
     	 BitmapInputStream = getResources().openRawResource(R.raw.selectpic32);
      }
          
      frame_ = new short [KIND.width * KIND.height];
 	 BitmapBytes = new byte[KIND.width * KIND.height *2]; //512 * 2 = 1024 or 1024 * 2 = 2048
-	 
-	 loadRGB565(); //this function loads a raw RGB565 image to the matrix
-	 
-	// if (showProx_ == false) {    
-		 //setHomeText(getResources().getString(R.string.home_screen_verbage));
-	//	// setText("");
-	// }
-	// else {
-		 //setHomeText(getResources().getString(R.string.homeVerbage)); //causing crashing for some reason
-	// }
-	 
  }
+    
+   private void loadProxDelayTimer () {
+	   showPleaseWait("Just a Moment..");
+	   matrixdelaytimer.start();
+   }
     
     private void loadProxImage() throws ConnectionLostException {
     	
@@ -347,15 +327,56 @@ public class MainActivity extends IOIOActivity   {
         	BitmapInputStream = getResources().openRawResource(R.raw.a22);	
         	proxCounter = 0; //reset it back
             break; 
-  }	  
+  }	   
  		
  		 proxCounter++;
-    	 loadRGB565();
-    	 matrix_.frame(frame_);  //write to the matrix    	
+ 		 BitmapInputStreamBlank = getResources().openRawResource(R.raw.blank32);
+ 		 loadBlankRGB565(); //load a blank screen first
+ 		 matrix_.frame(frame_);  //write the blank frame to the matrix
+ 		
+    	 loadRGB565(); //now load the normal message
+    	 matrix_.frame(frame_);  //write to the matrix  
+    	// matrix_.frame(frame_);  //write to the matrix    	
+    	// matrix_.frame(frame_);  //write to the matrix    	
+       //  matrix_.frame(frame_);  //write to the matrix    	
+    	// matrix_.frame(frame_);  //write to the matrix    	
+    	// matrix_.frame(frame_);  //write to the matrix    	
+    	// matrix_.frame(frame_);  //write to the matrix    	
+    	// matrix_.frame(frame_);  //write to the matrix    	
+    	
+    	 appFirstRunDone = 1;
     	 proxImageTimer.start(); //now start the timer and then we'll clear it later
+    	
     }
     
-    
+    public class MatrixDelayTimer extends CountDownTimer
+  	{
+
+  		public MatrixDelayTimer(long startTime, long interval)
+  			{
+  				super(startTime, interval);
+  			}
+
+  		@Override
+  		public void onFinish()
+  			{
+  			
+  			try {
+				loadProxImage();
+			} catch (ConnectionLostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+  			
+  			pDialog.dismiss();
+	  		
+  			}
+
+  		@Override
+  		public void onTick(long millisUntilFinished)				{
+  			//not used
+  		}
+  	}      
       
     
    private void loadRGB565()  {
@@ -379,10 +400,30 @@ public class MainActivity extends IOIOActivity   {
    			frame_[i] = (short) (((short) BitmapBytes[y] & 0xFF) | (((short) BitmapBytes[y + 1] & 0xFF) << 8));
    			y = y + 2;
    		}
-   		
-   
-	   
    }
+   
+   private void loadBlankRGB565()  {
+	   
+		try {
+  			int n = BitmapInputStreamBlank.read(BitmapBytes, 0, BitmapBytes.length); // reads
+  																				// the
+  																				// input
+  																				// stream
+  																				// into
+  																				// a
+  																				// byte
+  																				// array
+  			Arrays.fill(BitmapBytes, n, BitmapBytes.length, (byte) 0);
+  		} catch (IOException e) {
+  			e.printStackTrace();
+  		}
+
+  		int y = 0;
+  		for (int i = 0; i < frame_.length; i++) {
+  			frame_[i] = (short) (((short) BitmapBytes[y] & 0xFF) | (((short) BitmapBytes[y + 1] & 0xFF) << 8));
+  			y = y + 2;
+  		}
+  }
    
    public class ProxImageTimer extends CountDownTimer
   	{
@@ -471,51 +512,79 @@ public class MainActivity extends IOIOActivity   {
 	
     
     class IOIOThread extends BaseIOIOLooper {
-  		//private ioio.lib.api.RgbLedMatrix matrix_;
-  		private AnalogInput prox_;
-  		float proxValue;
-
-  		@Override
-  		protected void setup() throws ConnectionLostException {
-  			prox_ = ioio_.openAnalogInput(proximityPin_);		
-  			matrix_ = ioio_.openRgbLedMatrix(KIND);
-  			deviceFound = 1; //if we went here, then we are connected over bluetooth or USB
-  			connectTimer.cancel(); //we can stop this since it was found
-  		}
-
-  		@Override
-  		public void loop() throws ConnectionLostException {
-  		
-  		try {
-			
-  			proxValue = prox_.read();
-  			proxValue = proxValue * 1000;	
-  			int proxInt = (int)proxValue;
-  			
-  			if (showProx_ == true) {
-  				setText(Integer.toString(proxInt));
-  			}
-  			
-  			if ((proxValue >= proximityThresholdLower_) && (proxValue <= proximityThresholdUpper_) && (proxTriggeredFlag == 0)) { //if we're in range
-  				proxTriggeredFlag = 1;
-  				loadProxImage();
-  			}
-  			
-  			//matrix_.frame(frame_); //if you put this here, the app will crash and lock up
+	  		//private ioio.lib.api.RgbLedMatrix matrix_;
+	  		private AnalogInput prox_;
+	  		float proxValue;
+	
+	  		@Override
+	  		protected void setup() throws ConnectionLostException {
+	  			prox_ = ioio_.openAnalogInput(proximityPin_);		
+	  			matrix_ = ioio_.openRgbLedMatrix(KIND);
+	  			deviceFound = 1; //if we went here, then we are connected over bluetooth or USB
+	  			connectTimer.cancel(); //we can stop this since it was found
+	  			
+	  			if (debug_ == true) {  			
+		  			showToast("Bluetooth Connected");
+		  			//showToast("App Started Flag: " + appAlreadyStarted);
+	  			}
+	  		
+	  		}
+	
+	  		@Override
+	  		public void loop() throws ConnectionLostException {
+	  		
+	  		try {
 				
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				ioio_.disconnect();
-			} catch (ConnectionLostException e) {
-				throw e;
+	  			proxValue = prox_.read();
+	  			proxValue = proxValue * 1000;	
+	  			int proxInt = (int)proxValue;
+	  			
+	  			if (showProx_ == true) {
+	  				setText(Integer.toString(proxInt));
+	  			}
+	  			
+	  			if ((proxValue >= proximityThresholdLower_) && (proxValue <= proximityThresholdUpper_) && (proxTriggeredFlag == 0)) { //if we're in range
+	  				proxTriggeredFlag = 1;
+	  				
+	  				if (appFirstRunDone == 1) {
+	  					loadProxImage();
+	  				}
+	  				else {
+	  					loadProxDelayTimer(); //it's the first time so we need an extra delay because of the artifacts issue
+	  				}	
+	  			}
+	  			
+	  			//matrix_.frame(frame_); //if you put this here, the app will crash and lock up, mainly on older/slower phones
+					
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					ioio_.disconnect();
+				} catch (ConnectionLostException e) {
+					throw e;
+				}
+	  		
+	  			//matrix_.frame(frame_); //if you put this here, the app will crash and lock up
 			}
-  		
-  			//matrix_.frame(frame_); //if you put this here, the app will crash and lock up
-		}
-  		
-  		
-  		
-  		}
+	  		
+	  		@Override
+			public void disconnected() {
+				Log.i(LOG_TAG, "IOIO disconnected");
+				if (debug_ == true) {  			
+		  			showToast("Bluetooth Disconnected");
+	  			}
+				 //ioio_.disconnect();  //that caused a fatal crash
+			}
+	
+			@Override
+			public void incompatible() {  //if the wrong firmware is there
+				//AlertDialog.Builder alert=new AlertDialog.Builder(context); //causing a crash
+				//alert.setTitle(getResources().getString(R.string.notFoundString)).setIcon(R.drawable.icon).setMessage(getResources().getString(R.string.bluetoothPairingString)).setNeutralButton(getResources().getString(R.string.OKText), null).show();	
+				showToast("Incompatbile firmware!");
+				showToast("This app won't work until you flash the IOIO with the correct firmware!");
+				showToast("You can use the IOIO Manager Android app to flash the correct firmware");
+				Log.e(LOG_TAG, "Incompatbile firmware!");
+			}
+  	}
 
   	@Override
   	protected IOIOLooper createIOIOLooper() {
@@ -563,9 +632,8 @@ public class MainActivity extends IOIOActivity   {
     private void showPleaseWait(final String str) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				//pDialog = ProgressDialog.show(breath.this,analyzingText, justAmomentText, true);
-				pDialog = ProgressDialog.show(MainActivity.this,getString(R.string.loadingImagesPlsWaitTitle), str, true);
-				//pDialog.setCancelable(true);  //we don't need this one
+				pDialog = ProgressDialog.show(MainActivity.this,"Please wait", str, true);
+				pDialog.setCancelable(true);
 			}
 		});
 	}
@@ -587,25 +655,28 @@ public class MainActivity extends IOIOActivity   {
     	 BitmapInputStream = getResources().openRawResource(R.raw.blank32); //load a blank image to clear it
     	 loadRGB565();
     	 matrix_.frame(frame_);  //dont' forget to write the frame    	
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	 matrix_.frame(frame_); 
+    	
     	//let's clear it and it will show again after the user triggers the next prox sensor
     }
     
    
-	//@Override
-	//protected void onStop() {
-		//super.onStop();
-	//}
-	
-	//@Override
-	//protected void onStart() {
-		//	super.onStart();
-	//}
-    
-   
- 
-
-    
-    
+    @Override
+	protected void onPause() {  //note on pause you can clear the matrix before exiting, on stop and on destroy are too late
+		super.onPause();
+		try {
+			clearMatrixImage();
+		} catch (ConnectionLostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
    
     
 }

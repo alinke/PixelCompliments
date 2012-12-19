@@ -15,7 +15,7 @@
         android:paddingTop="5dp"
         android:text="@string/homeVerbage"
         android:textColor="#000000"
-        android:textSize="26sp" />
+        android:textSize="24sp" />
 
     <!--
          <ImageView
@@ -38,6 +38,6 @@
          android:gravity="center|center_vertical|left"
          android:text="Waiting for Proximity Sensor Data..."
          android:textColor="#DB2645"
-         android:textSize="26sp" />
+         android:textSize="24sp" />
 
 </RelativeLayout>   
