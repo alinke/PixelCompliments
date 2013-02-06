@@ -35,9 +35,10 @@ public final class R {
     }
     public static final class id {
         public static final int firstTimeSetup1=0x7f0b0000;
-        public static final int menu_about=0x7f0b0003;
-        public static final int menu_instructions=0x7f0b0004;
-        public static final int menu_prefs=0x7f0b0002;
+        public static final int menu_about=0x7f0b0004;
+        public static final int menu_instructions=0x7f0b0005;
+        public static final int menu_prefs=0x7f0b0003;
+        public static final int proxRangeTextView=0x7f0b0002;
         public static final int proxTextView=0x7f0b0001;
     }
     public static final class layout {

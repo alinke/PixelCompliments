@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
@@ -43,18 +44,18 @@ public class MainActivity extends IOIOActivity   {
    
 	private ioio.lib.api.RgbLedMatrix.Matrix KIND;  //have to do it this way because there is a matrix library conflict
     private static final String TAG = "Pixel Compliments";	
-  	private short[] frame_ = new short[512];
-  	private short[] rgb_;
+  	private short[] frame_ ;
+  //	private short[] rgb_;
   	public static final Bitmap.Config FAST_BITMAP_CONFIG = Bitmap.Config.RGB_565;
   	private byte[] BitmapBytes;
-  	private byte[] BitmayArray;
+  	//private byte[] BitmayArray;
   	private InputStream BitmapInputStream;
   	private InputStream BitmapInputStreamBlank;
-  	private ByteBuffer bBuffer;
-  	private ShortBuffer sBuffer;
-  	private SensorManager mSensorManager;
-  	private int width_original;
-  	private int height_original; 
+  	//private ByteBuffer bBuffer;
+  	//private ShortBuffer sBuffer;
+  	//private SensorManager mSensorManager;
+  	//private int width_original;
+  	//private int height_original; 
   	private int i = 0;
   	private int deviceFound = 0;
   	private Handler mHandler;
@@ -83,7 +84,7 @@ public class MainActivity extends IOIOActivity   {
      private int proximityPin_;
      private int proximityThresholdLower_;
      private int proximityThresholdUpper_;
-     private TextView proxTextView_;
+    
      private TextView firstTimeSetup1_;
      private ProgressDialog pDialog = null;
      private boolean showProx_;
@@ -92,7 +93,11 @@ public class MainActivity extends IOIOActivity   {
      private int proxCounter = 1;
      private boolean debug_;
      private int appFirstRunDone = 0;
-     private int startupDelay_ = 5;
+     private int startupDelay_ = 2;
+     private TextView proxTextView_;
+ 	 private TextView proxRangeTextView_;
+     private TextView proxMin_;
+     private TextView proxMax_;
      
 
     @Override
@@ -114,17 +119,20 @@ public class MainActivity extends IOIOActivity   {
             Log.v(LOG_TAG, e.getMessage());
         }
         
-        //******** preferences code
-        resources = this.getResources();
-        setPreferences();
-        //***************************
+       
         
         if (noSleep == true) {        	      	
         	this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); //disables sleep mode
         }	
         
         proxTextView_ = (TextView)findViewById(R.id.proxTextView);
+        proxRangeTextView_ = (TextView)findViewById(R.id.proxRangeTextView);        
         firstTimeSetup1_ = (TextView)findViewById(R.id.firstTimeSetup1);
+        
+        //******** preferences code
+        resources = this.getResources();
+        setPreferences();
+        //***************************
         
         connectTimer = new ConnectTimer(30000,5000); //pop up a message if it's not connected by this timer
  		connectTimer.start(); //this timer will pop up a message box if the device is not found
@@ -132,7 +140,7 @@ public class MainActivity extends IOIOActivity   {
  		proxImageTimer = new ProxImageTimer(imageDisplayDuration*1000,imageDisplayDuration*1000);   		
  		pausebetweenimagesdurationTimer = new PauseBetweenImagesDurationTimer(pauseBetweenImagesDuration*1000,pauseBetweenImagesDuration*1000); 
  		
- 		matrixdelaytimer = new MatrixDelayTimer(startupDelay_*1000,startupDelay_*1000);
+ 	  //  matrixdelaytimer = new MatrixDelayTimer(startupDelay_*1000,startupDelay_*1000);
  		
  		setupInstructionsString = getResources().getString(R.string.setupInstructionsString);
         setupInstructionsStringTitle = getResources().getString(R.string.setupInstructionsStringTitle);
@@ -217,13 +225,14 @@ public class MainActivity extends IOIOActivity   {
     
     proximityThresholdUpper_ = Integer.valueOf(prefs.getString(   
   	        resources.getString(R.string.pref_proxThresholdUpper),
-  	        resources.getString(R.string.proximityThresholdUpperDefault)));   
-     
-     
+  	        resources.getString(R.string.proximityThresholdUpperDefault)));  
+      
      matrix_model = Integer.valueOf(prefs.getString(   //the selected RGB LED Matrix Type
     	        resources.getString(R.string.selected_matrix),
     	        resources.getString(R.string.matrix_default_value))); 
      
+     setProxRangeText("Proximity Trigger Range: Between " + proximityThresholdLower_ + " and " + proximityThresholdUpper_);
+      
      
      switch (matrix_model) {  //get this from the preferences
      case 0:
@@ -546,12 +555,12 @@ public class MainActivity extends IOIOActivity   {
 	  			if ((proxValue >= proximityThresholdLower_) && (proxValue <= proximityThresholdUpper_) && (proxTriggeredFlag == 0)) { //if we're in range
 	  				proxTriggeredFlag = 1;
 	  				
-	  				if (appFirstRunDone == 1) {
+	  				//if (appFirstRunDone == 1) { //don't need this anymore as the artifacts issue was fixed
 	  					loadProxImage();
-	  				}
-	  				else {
-	  					loadProxDelayTimer(); //it's the first time so we need an extra delay because of the artifacts issue
-	  				}	
+	  			//	}
+	  				//else {
+	  				//	loadProxDelayTimer(); //it's the first time so we need an extra delay because of the artifacts issue
+	  				//}	
 	  			}
 	  			
 	  			//matrix_.frame(frame_); //if you put this here, the app will crash and lock up, mainly on older/slower phones
@@ -625,6 +634,33 @@ public class MainActivity extends IOIOActivity   {
 			@Override
 			public void run() {
 				proxTextView_.setText(str);
+			}
+		});
+	}
+    
+    private void setProxRangeText(final String str) {  
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				proxRangeTextView_.setText(str);
+			}
+		});
+	}
+    
+    private void setProxMinLabel(final String str) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				proxMin_.setText(str);
+			}
+		});
+	}
+    
+    private void setProxMaxLabel(final String str) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				proxMax_.setText(str);
 			}
 		});
 	}

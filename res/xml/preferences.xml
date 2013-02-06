@@ -90,13 +90,13 @@
     android:dialogTitle="@string/dialogTitleMatrix"
     android:defaultValue="@string/matrix_default_value" />
    
-   <EditTextPreference
+   <!-- <EditTextPreference
    android:title="@string/startupDelay"
    android:key="@string/pref_startupDelay"
    android:numeric="integer"
    android:maxLength="2"
    android:defaultValue="@string/startupDelayDefault"
-   android:summary="@string/startupDelaySummary"/>
+   android:summary="@string/startupDelaySummary"/>-->
    
     <CheckBoxPreference
     android:title="@string/debugMode"

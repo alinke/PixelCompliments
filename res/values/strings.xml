@@ -57,7 +57,7 @@
     <string name="menu_rescan_title">Rescan</string>
     <string name="rescan_screen_verbage">Now scanning your SD card or internal memory for new images or deletions to the pixelalbum folder, just a moment&#8230;</string>
     
-    <string name="homeVerbage">Proximity Sensor Calibration\n\nThe proximity sensor reading is shown below, modify the proximty lower and upper threshold values in this app\'s settings accordingly such that the compliment will be displayed when the user walks within range.</string>
+    <string name="homeVerbage">PIXEL Compliments\n\nThe proximity sensor reading is shown below, modify the proximty minimum and maximum values in this app\'s settings accordingly such that the compliment will be displayed when the user walks within range.</string>
     <string name="startup_verbage_2">Copying stock halloween images to your SD card or internal memory&#8230;</string>
     <string name="firstTime_instructions">After this completes, select Instructions from the menu to use your own images</string>
     
@@ -74,7 +74,7 @@
     <string name="pauseBetweenImagesDurationDefault">3</string>
     <string name="pauseBetweenImagesDurationSummary">Delay in seconds to show the next image if the user is still standing in proximity sensor range</string>
     
-    <string name="proximityThresholdLower">Prox Threshold Lower</string>    
+    <string name="proximityThresholdLower">Prox Min Trigger Value</string>    
     <string name="pref_proxThresholdLower">pref_proxThreshold</string>
     <string name="proximityThresholdLowerDefault">150</string>
     <string name="proximityThresholdLowerSummary">An image will display when the proximity sensor value falls between the lower and upper thresholds</string>
@@ -84,9 +84,9 @@
     <string name="startupDelayDefault">5</string>
     <string name="startupDelaySummary">You should not need to change this, only tweak if you are getting pixel artifacts showing up</string>
         
-    <string name="proximityThresholdUpper">Prox Threshold Upper</string>    
+    <string name="proximityThresholdUpper">Prox Max Trigger Value</string>    
     <string name="pref_proxThresholdUpper">pref_proxThresholdUpper</string>
-    <string name="proximityThresholdUpperDefault">180</string>
+    <string name="proximityThresholdUpperDefault">400</string>
     <string name="proximityThresholdUpperSummary">An image will display when the proximity sensor value falls between the lower and upper thresholds</string>
     
     <string name="proximityPin">Proximity Pin</string>    
