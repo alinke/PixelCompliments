@@ -2,18 +2,16 @@
 
 <resources>
 	
-	<string-array name="matrix_options">
-    <item>PIXEL 16x32 V1</item>
-    <item>Adafruit 16x32</item>
-    <item>PIXEL 32x32 V1</item>
-    <item>PIXEL 32x32 V2</item>
-	</string-array>
+<string-array name="matrix_options">
+    <item>PIXEL 32x32</item>
+    <item>Adafruit 32x32</item>
+    <item>Adafruit 32x32 Color Swap</item>
+</string-array>
 	
 <string-array name="matrix_values">
-    <item>0</item>
-    <item>1</item>
-    <item>2</item>
     <item>3</item>
+    <item>11</item>
+    <item>12</item>
 </string-array>
 
 

@@ -26,7 +26,20 @@
     android:defaultValue="@string/pref_noSleepDefault"
     android:summary="@string/noSleepSummary"/>
     
-     
+     <ListPreference
+    android:key="@string/selected_matrix"
+    android:title="@string/matrix"
+    android:summary="@string/matrixSummary"
+    android:entries="@array/matrix_options"
+    android:entryValues="@array/matrix_values"
+    android:dialogTitle="@string/dialogTitleMatrix"
+    android:defaultValue="@string/matrix_default_value" />
+   
+     <CheckBoxPreference
+    android:title="@string/AutoSelectPanel"
+    android:key="pref_AutoSelectPanel"
+    android:defaultValue="@string/pref_AutoSelectPanelDefault"
+    android:summary="@string/AutoSelectPanelSummary"/>
     
       <!-- <CheckBoxPreference
     android:title="Call Taxi"
@@ -81,14 +94,7 @@
    android:defaultValue="@string/proximityPinDefault"
    android:summary="@string/proximityPinSummary"/>
    
-   <ListPreference
-    android:key="@string/selected_matrix"
-    android:title="@string/matrix"
-    android:summary="@string/matrixSummary"
-    android:entries="@array/matrix_options"
-    android:entryValues="@array/matrix_values"
-    android:dialogTitle="@string/dialogTitleMatrix"
-    android:defaultValue="@string/matrix_default_value" />
+   
    
    <!-- <EditTextPreference
    android:title="@string/startupDelay"

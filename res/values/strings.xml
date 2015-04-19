@@ -8,13 +8,17 @@
     <string name="menu_about_title">About</string> 
     <string name="menu_about_summary">htp://ledpixelart.com\n\nDesigned by Open Gadgets LLC</string>
     <string name="versionString">Version</string> 
+    <string name="BootloaderVersionString">Bootloader Version</string> 
+    <string name="FirmwareVersionString">Firmware Version</string> 
+    <string name="LibraryVersionString">Library Version</string> 
+    <string name="HardwareVersionString">Hardware Version</string> 
     
    <string name="oneTimeSetupString">One Time Setup: Copying stock images to your SD card.</string> 
-   <string name="bluetoothPairingString">Please ensure Bluetooth pairing has been completed prior. The Bluetooth pairing code is: 4545."</string> 
+   <string name="bluetoothPairingString">Please ensure Bluetooth pairing has been completed prior. The Bluetooth pairing code is: 0000."</string> 
     
    
    <string name="menu_instructions_title">Instructions</string>
-   <string name="setupInstructionsString">First pair your Android device to PIXEL which will show up as \'IOIO\' in Bluetooth using code 4545.\n\nAfter physically mounting PIXEL in your desired location, now calibrate the proximity sensor.\n\nFirst take a note of the proximity sensor value when no one is in front of PIXEL.\n\nThen stand in the location where you want the proximity sensor to trigger displaying the image.\n\nBased on that, then enter the lower and upper thresholds in the settings of this app.\n\nWhen the user is within this range, the image(s) will then display.\n\nYou can also control how long the image displays via the Image Display Duration setting.</string>
+   <string name="setupInstructionsString">First pair your Android device to PIXEL which will show up as \'PIXEL\' in Bluetooth using code 0000.\n\nAfter physically mounting PIXEL in your desired location, now calibrate the proximity sensor.\n\nFirst take a note of the proximity sensor value when no one is in front of PIXEL.\n\nThen stand in the location where you want the proximity sensor to trigger displaying the image.\n\nBased on that, then enter the lower and upper thresholds in the settings of this app.\n\nWhen the user is within this range, the image(s) will then display.\n\nYou can also control how long the image displays via the Image Display Duration setting.</string>
    <string name="setupInstructionsStringTitle">Instructions</string>   
      
      
@@ -30,13 +34,18 @@
     <string name="notFoundString">PIXEL Not Found</string>   
    
     <string name="selected_matrix">selected_matrix</string>
-    <string name="matrix">LED Panel Selection</string>
-    <string name="matrixSummary">Select your LED Panel Model</string>    
+    <string name="matrix">PIXEL Model</string>
+    <string name="matrixSummary">Select your PIXEL Model / LED Panel Model</string>    
     <string name="dialogTitleMatrix">LED Panel Selection</string>
-    <string name="matrix_default_value">3</string>   
+    <string name="matrix_default_value">11</string>   
+    
+    <string name="AutoSelectPanel">Auto Select PIXEL / LED Panel</string>    
+    <string name="pref_AutoSelectPanel">pref_AutoSelectPanel</string>
+    <string name="pref_AutoSelectPanelDefault">true</string>
+    <string name="AutoSelectPanelSummary">Turn this off if you want to manually select the LED panel</string>
     
     <string name="bluetooth_pair">Blueooth Pairing</string>
-    <string name="bluetooth_pairSummary">Shortcut to the Bluetooth settings screen. Pair to IOIO using code: 4545</string>
+    <string name="bluetooth_pairSummary">Shortcut to the Bluetooth settings screen. Pair to PIXEL using code: 0000</string>
     
     <string name="slideShowtitle">Slide Show Settings</string>
     <string name="slideShowtitleSummary">Slide Show Settings</string>
@@ -92,7 +101,7 @@
     <string name="proximityPin">Proximity Pin</string>    
     <string name="pref_proximityPin">pref_proximityPin</string>
     <string name="proximityPinDefault">32</string>
-    <string name="proximityPinSummary">IOIO Pin number used for the proximity sensor input</string>
+    <string name="proximityPinSummary">PIXEL Pin number used for the proximity sensor input</string>
     
     
     <string name="stopSlideShowMessage">You\'re still in slide show mode, swipe from right to left to end the slide show and then you can select a single image</string>
